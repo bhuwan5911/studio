@@ -13,6 +13,9 @@ import { useStudentStore } from '@/hooks/use-student-store';
 import { downloadFile } from '@/lib/utils';
 import { Download } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import * as React from 'react';
 
 export default function ReportsPage() {
   const { students } = useStudentStore();
@@ -21,10 +24,36 @@ export default function ReportsPage() {
   const handleDownload = (format: 'csv' | 'json') => {
     downloadFile(approvedStudents, format, 'student_report');
   };
+  
+  const chartData = React.useMemo(() => {
+    if (!approvedStudents.length) return [];
+    
+    const dataByDept = approvedStudents.reduce((acc, student) => {
+        if (!acc[student.department]) {
+            acc[student.department] = { totalMarks: 0, count: 0 };
+        }
+        acc[student.department].totalMarks += student.marks;
+        acc[student.department].count += 1;
+        return acc;
+    }, {} as Record<string, { totalMarks: number; count: number }>);
+
+    return Object.entries(dataByDept).map(([department, {totalMarks, count}]) => ({
+        department,
+        averageMarks: Math.round(totalMarks / count)
+    }));
+  }, [approvedStudents]);
+
+  const chartConfig = {
+    averageMarks: {
+      label: 'Average Marks',
+      color: 'hsl(var(--primary))',
+    },
+  };
+
 
   return (
     <div className="space-y-6">
-       <div className="flex items-center justify-between">
+       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
             <h1 className="text-3xl font-bold tracking-tight">Reports</h1>
             <p className="text-muted-foreground">Download student performance reports.</p>
@@ -41,6 +70,38 @@ export default function ReportsPage() {
         </div>
       </div>
       
+      <Card>
+        <CardHeader>
+            <CardTitle>Department Performance</CardTitle>
+            <CardDescription>Average student marks by department.</CardDescription>
+        </CardHeader>
+        <CardContent>
+            {chartData.length > 0 ? (
+                <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                    <BarChart accessibilityLayer data={chartData}>
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                        dataKey="department"
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                        />
+                        <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent hideLabel />}
+                        />
+                        <Bar dataKey="averageMarks" fill="var(--color-averageMarks)" radius={8} />
+                    </BarChart>
+                </ChartContainer>
+            ) : (
+                <div className="text-center p-8">
+                    <p className="text-muted-foreground">Not enough data to display a chart.</p>
+                </div>
+            )}
+        </CardContent>
+      </Card>
+
+
       <Card>
         <CardHeader>
             <CardTitle>Marks Overview</CardTitle>
