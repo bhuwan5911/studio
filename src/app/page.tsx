@@ -46,11 +46,16 @@ export default function Home() {
           Here's a quick overview of your campus data.
         </p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <DashboardStatCard
           title="Total Students"
-          value={approvedStudents.length}
+          value={students.length}
           icon={Users}
+        />
+         <DashboardStatCard
+          title="Approved Students"
+          value={approvedStudents.length}
+          icon={UserCheck}
         />
         <DashboardStatCard
           title="Topper"
