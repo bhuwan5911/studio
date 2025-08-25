@@ -1,9 +1,10 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useStudentStore } from '@/hooks/use-student-store';
-import { UserCheck, Users, Clock } from 'lucide-react';
+import { UserCheck, Users, Clock, UserPlus } from 'lucide-react';
 import type { Student } from '@/lib/types';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const DashboardStatCard = ({
   title,
@@ -29,6 +30,7 @@ export default function Home() {
   const { students, pendingStudents } = useStudentStore();
 
   const approvedStudents = students.filter(s => s.status === 'approved');
+  const recentlyApproved = students.filter(s => s.status === 'approved').slice(-5).reverse();
 
   const topper = approvedStudents.reduce(
     (max: Student | null, student: Student) =>
@@ -63,10 +65,34 @@ export default function Home() {
       </div>
        <Card>
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle>Recently Approved Students</CardTitle>
+            <CardDescription>The last 5 students that were approved.</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">No recent activity to show.</p>
+            {recentlyApproved.length > 0 ? (
+              <div className="space-y-4">
+                {recentlyApproved.map((student) => (
+                  <div key={student.id} className="flex items-center gap-4">
+                    <Avatar>
+                        <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="grid gap-0.5 text-sm">
+                      <div className="font-semibold">{student.name}</div>
+                      <div className="text-muted-foreground">{student.department}</div>
+                    </div>
+                    <div className="ml-auto text-sm font-medium">{student.marks} Marks</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+                <div className="flex flex-col items-center justify-center p-8 text-center">
+                    <UserPlus className="h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-4 text-lg font-semibold">No recent approvals</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                        Approved students will appear here.
+                    </p>
+                </div>
+            )}
           </CardContent>
         </Card>
     </div>

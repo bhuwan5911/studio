@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { StudentProvider } from '@/contexts/student-provider';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { MainSidebar } from '@/components/main-sidebar';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'CampusConnect',
@@ -37,15 +38,22 @@ export default function RootLayout({
       <body
         className={cn('min-h-screen bg-background font-body antialiased')}
       >
-        <StudentProvider>
-          <SidebarProvider>
-            <MainSidebar />
-            <SidebarInset>
-              <div className="p-4 sm:p-6 lg:p-8">{children}</div>
-            </SidebarInset>
-            <Toaster />
-          </SidebarProvider>
-        </StudentProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <StudentProvider>
+            <SidebarProvider>
+              <MainSidebar />
+              <SidebarInset>
+                <div className="p-4 sm:p-6 lg:p-8">{children}</div>
+              </SidebarInset>
+              <Toaster />
+            </SidebarProvider>
+          </StudentProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

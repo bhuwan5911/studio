@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowUpDown, Edit, Trash2 } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowUpDown, Edit, Trash2, Users } from 'lucide-react';
 import { useStudentStore } from '@/hooks/use-student-store';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -156,8 +156,16 @@ export default function StudentsPage() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} className="h-24 text-center">
-                        No results.
+                      <TableCell colSpan={6} className="h-48 text-center">
+                        <div className="flex flex-col items-center gap-4">
+                            <Users className="h-12 w-12 text-muted-foreground" />
+                            <div className="space-y-1">
+                                <h3 className="font-semibold">No students found</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    There are no approved students to display.
+                                </p>
+                            </div>
+                        </div>
                       </TableCell>
                     </TableRow>
                   )}

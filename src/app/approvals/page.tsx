@@ -5,6 +5,7 @@ import { useStudentStore } from '@/hooks/use-student-store';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check, X } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { RejectStudentDialog } from '@/components/reject-student-dialog';
 
 export default function ApprovalsPage() {
   const { pendingStudents, dispatch } = useStudentStore();
@@ -49,9 +50,14 @@ export default function ApprovalsPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={() => handleReject(student.id)}>
-                  <X className="mr-2 h-4 w-4" /> Reject
-                </Button>
+                 <RejectStudentDialog
+                    onConfirm={() => handleReject(student.id)}
+                    trigger={
+                      <Button variant="outline" size="sm">
+                        <X className="mr-2 h-4 w-4" /> Reject
+                      </Button>
+                    }
+                  />
                 <Button size="sm" onClick={() => handleApprove(student.id)}>
                   <Check className="mr-2 h-4 w-4" /> Approve
                 </Button>
