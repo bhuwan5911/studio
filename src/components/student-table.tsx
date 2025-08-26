@@ -25,12 +25,20 @@ import type { Student } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { deleteStudent } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type SortKey = keyof Student;
 type SortDirection = 'asc' | 'desc';
 
-const StudentTableRow = React.memo(({ student, onDelete, onEdit }: { student: Student; onDelete: (id: string) => void; onEdit: (id: string) => void; }) => (
-    <TableRow>
+const StudentTableRow = React.memo(({ student, onDelete, onEdit, isSelected, onSelectionChange }: { student: Student; onDelete: (id: string) => void; onEdit: (id: string) => void; isSelected: boolean; onSelectionChange: (id: string, checked: boolean) => void; }) => (
+    <TableRow data-state={isSelected ? "selected" : ""}>
+        <TableCell>
+            <Checkbox
+                checked={isSelected}
+                onCheckedChange={(checked) => onSelectionChange(student.id, !!checked)}
+                aria-label="Select row"
+            />
+        </TableCell>
         <TableCell className="hidden md:table-cell"><Badge variant="secondary">{student.id}</Badge></TableCell>
         <TableCell className="font-medium">{student.name}</TableCell>
         <TableCell className="hidden sm:table-cell">{student.age}</TableCell>
@@ -71,7 +79,7 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
   const [searchTerm, setSearchTerm] = React.useState('');
   const [sortConfig, setSortConfig] = React.useState<{ key: SortKey; direction: SortDirection } | null>({ key: 'name', direction: 'asc' });
   const [currentPage, setCurrentPage] = React.useState(1);
-
+  const [selectedRows, setSelectedRows] = React.useState<Record<string, boolean>>({});
 
   const handleSort = (key: SortKey) => {
     let direction: SortDirection = 'asc';
@@ -106,11 +114,39 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
   
   const paginatedStudents = isPaginated ? filteredStudents.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE) : filteredStudents;
   const totalPages = isPaginated ? Math.ceil(filteredStudents.length / ITEMS_PER_PAGE) : 1;
+  
+  const numSelected = Object.values(selectedRows).filter(Boolean).length;
+
+  const handleSelectAll = (checked: boolean) => {
+    const newSelectedRows: Record<string, boolean> = {};
+    if(checked) {
+        paginatedStudents.forEach(student => {
+            newSelectedRows[student.id] = true;
+        });
+    }
+    setSelectedRows(newSelectedRows);
+  };
+
+  const handleSelectionChange = (id: string, checked: boolean) => {
+    setSelectedRows(prev => ({...prev, [id]: checked}));
+  };
 
   const handleDelete = React.useCallback(async (id: string) => {
     await deleteStudent(id);
+    setSelectedRows(prev => {
+        const newSelection = {...prev};
+        delete newSelection[id];
+        return newSelection;
+    })
     toast({ title: "Student Deleted", description: "The student has been removed." });
   }, [toast]);
+
+  const handleBulkDelete = async () => {
+      const idsToDelete = Object.keys(selectedRows).filter(id => selectedRows[id]);
+      await Promise.all(idsToDelete.map(id => deleteStudent(id)));
+      setSelectedRows({});
+      toast({ title: `${idsToDelete.length} Students Deleted`, description: "The selected students have been removed." });
+  };
 
   const handleEdit = React.useCallback((id: string) => {
     router.push(`/students/edit/${id}`);
@@ -119,7 +155,7 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
   return (
     <div className="space-y-4">
         {isPaginated && (
-             <div className="py-4">
+             <div className="flex items-center justify-between py-4">
               <Input
                 placeholder="Filter by name, department, or ID..."
                 value={searchTerm}
@@ -129,12 +165,32 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
                 }}
                 className="max-w-sm"
               />
+               {numSelected > 0 && (
+                <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">{numSelected} selected</span>
+                    <DeleteStudentDialog 
+                        onConfirm={handleBulkDelete}
+                        trigger={
+                             <Button variant="destructive" size="sm">
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete ({numSelected})
+                            </Button>
+                        } 
+                    />
+                </div>
+              )}
             </div>
         )}
         <div className="rounded-md border">
             <Table>
             <TableHeader>
                 <TableRow>
+                <TableHead padding="checkbox">
+                    <Checkbox
+                        checked={numSelected > 0 && numSelected === paginatedStudents.length}
+                        onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                        aria-label="Select all"
+                    />
+                </TableHead>
                 <TableHead className="hidden md:table-cell">ID</TableHead>
                 <TableHead>
                     <Button variant="ghost" onClick={() => handleSort('name')}>
@@ -155,15 +211,17 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
                 {paginatedStudents.length > 0 ? (
                 paginatedStudents.map((student) => (
                     <StudentTableRow 
-                    key={student.id} 
-                    student={student} 
-                    onDelete={handleDelete}
-                    onEdit={handleEdit}
+                        key={student.id} 
+                        student={student} 
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                        isSelected={!!selectedRows[student.id]}
+                        onSelectionChange={handleSelectionChange}
                     />
                 ))
                 ) : (
                 <TableRow>
-                    <TableCell colSpan={6} className="h-48 text-center">
+                    <TableCell colSpan={7} className="h-48 text-center">
                     <div className="flex flex-col items-center gap-4">
                         <Users className="h-12 w-12 text-muted-foreground" />
                         <div className="space-y-1">
