@@ -1,12 +1,6 @@
 import type { Student, UndoAction } from './types';
 
-let students: Student[] = [
-  { id: 'S001', name: 'Alice Johnson', age: 22, marks: 88, department: 'Computer Science', status: 'approved' },
-  { id: 'S002', name: 'Bob Smith', age: 21, marks: 92, department: 'Mechanical Engineering', status: 'approved' },
-  { id: 'S003', name: 'Charlie Brown', age: 23, marks: 76, department: 'Physics', status: 'approved' },
-  { id: 'S004', name: 'Diana Miller', age: 20, marks: 95, department: 'Computer Science', status: 'approved' },
-  { id: 'S006', name: 'Fiona Davis', age: 21, marks: 89, department: 'Mechanical Engineering', status: 'approved' },
-];
+let students: Student[] = [];
 
 let undoStack: UndoAction[] = [];
 
