@@ -17,14 +17,6 @@ import {
 
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
   Sheet,
   SheetContent,
@@ -72,43 +64,6 @@ function NavLink({ href, children, className }: { href: string, children: React.
         </Link>
     )
 }
-
-function UserMenu() {
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-9 w-9">
-                        <AvatarImage src="https://placehold.co/40x40.png" alt="@admin" data-ai-hint="user avatar" />
-                        <AvatarFallback>AD</AvatarFallback>
-                    </Avatar>
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuItem className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">Admin</p>
-                        <p className="text-xs leading-none text-muted-foreground">
-                        admin@campus.edu
-                        </p>
-                    </div>
-                </DropdownMenuItem>
-                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                    Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    Settings
-                </DropdownMenuItem>
-                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                    Log out
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-      </DropdownMenu>
-    )
-}
-
 
 export function Header() {
   const { pendingStudents, undoStack } = useStudentStore();
@@ -175,7 +130,6 @@ export function Header() {
 
         <div className="flex flex-1 items-center justify-end space-x-2">
             <ThemeToggle />
-            <UserMenu />
         </div>
       </div>
     </header>
