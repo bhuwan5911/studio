@@ -29,6 +29,8 @@ export default function Home() {
           autoPlay
           loop
           muted
+          playsInline
+          preload="none"
           className="absolute top-0 left-0 w-full h-full object-cover"
           data-ai-hint="university students walking"
         />

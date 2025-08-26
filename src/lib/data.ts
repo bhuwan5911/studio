@@ -140,7 +140,7 @@ export async function getStudentDistribution(): Promise<{ name: string; value: n
 }
 
 export async function getMarksDistribution(): Promise<{ name: string; count: number }[]> {
-    const approvedStudents = await getApproved.students();
+    const approvedStudents = await getApprovedStudents();
     if (!approvedStudents.length) return [];
      const bins = [
         { name: '90-100', count: 0 },
