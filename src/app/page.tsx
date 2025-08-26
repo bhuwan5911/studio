@@ -23,7 +23,7 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementTy
 export default function Home() {
   return (
     <div className="flex flex-col">
-      <div className="relative h-[calc(100vh-8rem)] w-[calc(100%+4rem)] sm:w-[calc(100%+6rem)] lg:w-[calc(100%+8rem)] -mt-4 sm:-mt-6 lg:-mt-8 -ml-4 sm:-ml-6 lg:-ml-8 mb-12">
+       <div className="relative h-[calc(100vh-10rem)] w-full -mt-4 sm:-mt-6 lg:-mt-8 mb-12">
         <video
           src="https://videos.pexels.com/video-files/853874/853874-hd_1920_1080_25fps.mp4"
           autoPlay
