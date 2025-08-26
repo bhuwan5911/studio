@@ -6,8 +6,8 @@ import type { Student } from './types';
 
 export async function addStudent(student: Student) {
     const result = await data.addStudent(student);
-    revalidatePath('/approvals');
-    revalidatePath('/undo');
+    revalidatePath('/students');
+    revalidatePath('/reports');
     return result;
 }
 
@@ -16,7 +16,6 @@ export async function updateStudent(id: string, studentData: Partial<Omit<Studen
     revalidatePath('/students');
     revalidatePath(`/students/edit/${id}`);
     revalidatePath('/reports');
-    revalidatePath('/undo');
     return result;
 }
 
@@ -24,10 +23,11 @@ export async function deleteStudent(id: string) {
     const result = await data.deleteStudent(id);
     revalidatePath('/students');
     revalidatePath('/reports');
-    revalidatePath('/undo');
     return result;
 }
 
+// These functions are no longer used with the simplified flow.
+// I'm keeping them here in case you want to re-introduce the feature later.
 export async function approveStudent(id: string) {
     const result = await data.approveStudent(id);
     revalidatePath('/approvals');

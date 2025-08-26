@@ -29,8 +29,6 @@ const navItems = [
   { href: '/', label: 'Home', icon: LayoutDashboard },
   { href: '/students', label: 'Students', icon: Users },
   { href: '/reports', label: 'Reports', icon: FileText },
-  { href: '/approvals', label: 'Approvals' },
-  { href: '/undo', label: 'Undo' },
 ];
 
 function ThemeToggle() {
