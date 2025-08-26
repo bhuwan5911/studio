@@ -5,7 +5,6 @@ import { useStudentStore } from '@/hooks/use-student-store';
 import { UserCheck, Users, Clock, UserPlus } from 'lucide-react';
 import type { Student } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Image from 'next/image';
 
 const DashboardStatCard = ({
   title,
@@ -42,14 +41,15 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-8">
       <div className="relative h-64 w-full rounded-lg overflow-hidden">
-          <Image
-            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="University campus"
-            fill
-            className="object-cover"
-            data-ai-hint="university campus"
-          />
-          <div className="absolute inset-0 bg-black/50 flex flex-col items-start justify-end p-8">
+        <video
+          src="https://videos.pexels.com/video-files/853874/853874-hd_1920_1080_25fps.mp4"
+          autoPlay
+          loop
+          muted
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          data-ai-hint="university students walking"
+        />
+        <div className="absolute inset-0 bg-black/50 flex flex-col items-start justify-end p-8">
             <h1 className="text-4xl font-bold tracking-tight text-white">Welcome to CampusConnect</h1>
             <p className="text-lg text-white/90 mt-2">
               Here's a quick overview of your campus data.
