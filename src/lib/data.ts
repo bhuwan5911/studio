@@ -15,34 +15,34 @@ let undoStack: UndoAction[] = [];
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export async function getStudents() {
-    await delay(100);
+    
     return students;
 }
 
 export async function getApprovedStudents() {
-    await delay(100);
+    
     return students.filter(s => s.status === 'approved');
 }
 
 export async function getPendingStudents() {
-    await delay(100);
+    
     return students.filter(s => s.status === 'pending');
 }
 
 export async function getStudentById(id: string) {
-    await delay(100);
+    
     return students.find(s => s.id === id);
 }
 
 export async function addStudent(student: Student) {
-    await delay(100);
+    
     students.push(student);
     undoStack.push({ id: crypto.randomUUID(), type: 'ADD', student, timestamp: new Date() });
     return student;
 }
 
 export async function updateStudent(id: string, data: Partial<Omit<Student, 'id'>>) {
-    await delay(100);
+    
     const studentIndex = students.findIndex(s => s.id === id);
     if (studentIndex === -1) return null;
     
@@ -56,7 +56,7 @@ export async function updateStudent(id: string, data: Partial<Omit<Student, 'id'
 }
 
 export async function deleteStudent(id: string) {
-    await delay(100);
+    
     const studentIndex = students.findIndex(s => s.id === id);
     if (studentIndex === -1) return null;
     
@@ -68,7 +68,7 @@ export async function deleteStudent(id: string) {
 
 
 export async function approveStudent(id: string) {
-    await delay(100);
+    
     const studentIndex = students.findIndex(s => s.id === id);
     if (studentIndex === -1) return null;
 
@@ -77,7 +77,7 @@ export async function approveStudent(id: string) {
 }
 
 export async function rejectStudent(id: string) {
-     await delay(100);
+     
     const studentIndex = students.findIndex(s => s.id === id);
     if (studentIndex === -1) return null;
     
@@ -86,12 +86,12 @@ export async function rejectStudent(id: string) {
 }
 
 export async function getLastUndoAction() {
-    await delay(100);
+    
     return undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
 }
 
 export async function undoLastAction() {
-    await delay(100);
+    
     if (undoStack.length === 0) return null;
     
     const lastAction = undoStack.pop();
