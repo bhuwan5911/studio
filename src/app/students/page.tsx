@@ -24,7 +24,7 @@ export default async function StudentsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Students</h1>
           <p className="text-muted-foreground">Manage all student records.</p>
         </div>
-        <Button asChild>
+        <Button asChild className="animate-pulse-subtle">
           <Link href="/students/add">
             <PlusCircle className="mr-2 h-4 w-4" /> Add Student
           </Link>
