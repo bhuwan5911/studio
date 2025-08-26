@@ -1,15 +1,10 @@
-'use client';
-
-import * as React from 'react';
-import { Button } from '@/components/ui/button';
-import { useStudentStore } from '@/hooks/use-student-store';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, X } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { RejectStudentDialog } from '@/components/reject-student-dialog';
 import type { Student } from '@/lib/types';
+import { getPendingStudents } from '@/lib/data';
+import { ApprovalActions } from '@/components/approval-actions';
 
-const StudentApprovalCard = React.memo(({ student, onApprove, onReject }: { student: Student; onApprove: (id: string) => void; onReject: (id: string) => void; }) => {
+const StudentApprovalCard = ({ student }: { student: Student; }) => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-4">
@@ -32,34 +27,15 @@ const StudentApprovalCard = React.memo(({ student, onApprove, onReject }: { stud
         </div>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
-          <RejectStudentDialog
-              onConfirm={() => onReject(student.id)}
-              trigger={
-              <Button variant="outline" size="sm">
-                  <X className="mr-2 h-4 w-4" /> Reject
-              </Button>
-              }
-          />
-          <Button size="sm" onClick={() => onApprove(student.id)}>
-              <Check className="mr-2 h-4 w-4" /> Approve
-          </Button>
+         <ApprovalActions studentId={student.id} />
       </CardFooter>
     </Card>
   );
-});
-StudentApprovalCard.displayName = 'StudentApprovalCard';
+};
 
 
-export default function ApprovalsPage() {
-  const { pendingStudents, dispatch } = useStudentStore();
-
-  const handleApprove = React.useCallback((id: string) => {
-    dispatch({ type: 'APPROVE_STUDENT', payload: id });
-  }, [dispatch]);
-
-  const handleReject = React.useCallback((id: string) => {
-    dispatch({ type: 'REJECT_STUDENT', payload: id });
-  }, [dispatch]);
+export default async function ApprovalsPage() {
+  const pendingStudents = await getPendingStudents();
 
   return (
     <div className="space-y-6">
@@ -75,8 +51,6 @@ export default function ApprovalsPage() {
             <StudentApprovalCard 
               key={student.id}
               student={student}
-              onApprove={handleApprove}
-              onReject={handleReject}
             />
           ))}
         </div>

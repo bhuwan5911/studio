@@ -23,15 +23,14 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { useStudentStore } from '@/hooks/use-student-store';
 import { Badge } from './ui/badge';
 
 const navItems = [
   { href: '/', label: 'Home', icon: LayoutDashboard },
   { href: '/students', label: 'Students', icon: Users },
   { href: '/reports', label: 'Reports', icon: FileText },
-  { href: '/approvals', label: 'Approvals', notificationKey: 'pendingStudents' },
-  { href: '/undo', label: 'Undo', notificationKey: 'undoStack' },
+  { href: '/approvals', label: 'Approvals' },
+  { href: '/undo', label: 'Undo' },
 ];
 
 function ThemeToggle() {
@@ -50,7 +49,7 @@ function ThemeToggle() {
   );
 }
 
-function NavLink({ href, children, className }: { href: string, children: React.ReactNode, className?: string }) {
+function NavLink({ href, children, className, onClick }: { href: string, children: React.ReactNode, className?: string, onClick?: () => void }) {
     const pathname = usePathname();
     const isActive = href === '/' ? pathname === href : pathname.startsWith(href);
 
@@ -59,20 +58,16 @@ function NavLink({ href, children, className }: { href: string, children: React.
             "text-sm font-medium transition-colors hover:text-primary",
             isActive ? "text-primary" : "text-muted-foreground",
             className
-        )}>
+        )}
+        onClick={onClick}
+        >
             {children}
         </Link>
     )
 }
 
 export function Header() {
-  const { pendingStudents, undoStack } = useStudentStore();
    const [isSheetOpen, setIsSheetOpen] = React.useState(false);
-
-  const notificationCounts = {
-    pendingStudents: pendingStudents.length,
-    undoStack: undoStack.length,
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -98,12 +93,10 @@ export function Header() {
                 <Logo />
                 <nav className="flex flex-col gap-4">
                     {navItems.map((item) => {
-                         const count = item.notificationKey ? notificationCounts[item.notificationKey as keyof typeof notificationCounts] : 0;
                          return (
                             <NavLink key={item.href} href={item.href} className="text-base" onClick={() => setIsSheetOpen(false)}>
                                 <div className="flex items-center justify-between">
                                     {item.label}
-                                    {count > 0 && <Badge variant="destructive">{count}</Badge>}
                                 </div>
                             </NavLink>
                          )
@@ -116,12 +109,10 @@ export function Header() {
          {/* Desktop Nav */}
         <nav className="hidden items-center space-x-6 md:flex">
            {navItems.map((item) => {
-                const count = item.notificationKey ? notificationCounts[item.notificationKey as keyof typeof notificationCounts] : 0;
                 return (
                     <NavLink key={item.href} href={item.href}>
                         <div className="flex items-center gap-2">
                            {item.label}
-                           {count > 0 && <Badge variant="destructive" className="h-5 w-5 justify-center p-0">{count}</Badge>}
                         </div>
                     </NavLink>
                 )

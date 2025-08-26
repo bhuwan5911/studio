@@ -1,6 +1,3 @@
-'use client';
-
-import * as React from 'react';
 import {
   Table,
   TableBody,
@@ -11,106 +8,15 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowUpDown, Edit, Trash2, Users } from 'lucide-react';
-import { useStudentStore } from '@/hooks/use-student-store';
+import { PlusCircle, Users } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { DeleteStudentDialog } from '@/components/delete-student-dialog';
-import type { Student } from '@/lib/types';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { getApprovedStudents } from '@/lib/data';
+import { StudentTable } from '@/components/student-table';
 
-
-type SortKey = keyof Student;
-type SortDirection = 'asc' | 'desc';
-
-const StudentTableRow = React.memo(({ student, onDelete, onEdit }: { student: Student; onDelete: (id: string) => void; onEdit: (id: string) => void; }) => (
-    <TableRow>
-        <TableCell className="hidden md:table-cell"><Badge variant="secondary">{student.id}</Badge></TableCell>
-        <TableCell className="font-medium">{student.name}</TableCell>
-        <TableCell className="hidden sm:table-cell">{student.age}</TableCell>
-        <TableCell>{student.marks}</TableCell>
-        <TableCell className="hidden md:table-cell">{student.department}</TableCell>
-        <TableCell>
-            <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit(student.id)}>
-                <Edit className="mr-2 h-4 w-4" /> Edit
-                </DropdownMenuItem>
-                <DeleteStudentDialog
-                    onConfirm={() => onDelete(student.id)}
-                    trigger={
-                        <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full text-destructive hover:!bg-destructive/10">
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete
-                        </div>
-                    }
-                />
-            </DropdownMenuContent>
-            </DropdownMenu>
-        </TableCell>
-    </TableRow>
-));
-StudentTableRow.displayName = 'StudentTableRow';
-
-export default function StudentsPage() {
-  const { students, dispatch } = useStudentStore();
-  const router = useRouter();
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [sortConfig, setSortConfig] = React.useState<{ key: SortKey; direction: SortDirection } | null>({ key: 'name', direction: 'asc' });
-
-  const approvedStudents = students.filter(s => s.status === 'approved');
-
-  const handleSort = (key: SortKey) => {
-    let direction: SortDirection = 'asc';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const sortedStudents = React.useMemo(() => {
-    let sortableItems = [...approvedStudents];
-    if (sortConfig !== null) {
-      sortableItems.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        }
-        return 0;
-      });
-    }
-    return sortableItems;
-  }, [approvedStudents, sortConfig]);
-
-  const filteredStudents = sortedStudents.filter(
-    (student) =>
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleDelete = React.useCallback((id: string) => {
-    dispatch({ type: 'DELETE_STUDENT', payload: id });
-  }, [dispatch]);
-
-  const handleEdit = React.useCallback((id: string) => {
-    router.push(`/students/edit/${id}`);
-  }, [router]);
-
+export default async function StudentsPage() {
+  const approvedStudents = await getApprovedStudents();
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -128,65 +34,10 @@ export default function StudentsPage() {
       <Card>
         <CardHeader>
            <CardTitle>Student List</CardTitle>
-            <CardDescription>A list of all approved students in the system.</CardDescription>
-             <div className="py-4">
-              <Input
-                placeholder="Filter by name, department, or ID..."
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                className="max-w-sm"
-              />
-            </div>
+           <CardDescription>A list of all approved students in the system.</CardDescription>
         </CardHeader>
         <CardContent>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="hidden md:table-cell">ID</TableHead>
-                    <TableHead>
-                      <Button variant="ghost" onClick={() => handleSort('name')}>
-                        Name <ArrowUpDown className="ml-2 h-4 w-4" />
-                      </Button>
-                    </TableHead>
-                    <TableHead className="hidden sm:table-cell">Age</TableHead>
-                    <TableHead>
-                      <Button variant="ghost" onClick={() => handleSort('marks')}>
-                        Marks <ArrowUpDown className="ml-2 h-4 w-4" />
-                      </Button>
-                    </TableHead>
-                    <TableHead className="hidden md:table-cell">Department</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredStudents.length > 0 ? (
-                    filteredStudents.map((student) => (
-                      <StudentTableRow 
-                        key={student.id} 
-                        student={student} 
-                        onDelete={handleDelete}
-                        onEdit={handleEdit}
-                      />
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-48 text-center">
-                        <div className="flex flex-col items-center gap-4">
-                            <Users className="h-12 w-12 text-muted-foreground" />
-                            <div className="space-y-1">
-                                <h3 className="font-semibold">No students found</h3>
-                                <p className="text-sm text-muted-foreground">
-                                    There are no approved students to display.
-                                </p>
-                            </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <StudentTable students={approvedStudents} isPaginated={true} />
         </CardContent>
       </Card>
     </div>

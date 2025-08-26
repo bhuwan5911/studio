@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import { StudentProvider } from '@/contexts/student-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Header } from '@/components/header';
 import { CustomCursor } from '@/components/custom-cursor';
@@ -44,12 +43,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <StudentProvider>
-            <CustomCursor />
-            <Header />
-            <main className="p-4 sm:p-6 lg:p-8">{children}</main>
-            <Toaster />
-          </StudentProvider>
+          <CustomCursor />
+          <Header />
+          <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
