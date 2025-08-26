@@ -40,7 +40,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="relative h-64 w-full rounded-lg overflow-hidden">
+      <div className="relative h-80 w-full rounded-lg overflow-hidden">
         <video
           src="https://videos.pexels.com/video-files/853874/853874-hd_1920_1080_25fps.mp4"
           autoPlay
@@ -49,10 +49,12 @@ export default function Home() {
           className="absolute top-0 left-0 w-full h-full object-cover"
           data-ai-hint="university students walking"
         />
-        <div className="absolute inset-0 bg-black/50 flex flex-col items-start justify-end p-8">
-            <h1 className="text-4xl font-bold tracking-tight text-white">Welcome to CampusConnect</h1>
-            <p className="text-lg text-white/90 mt-2">
-              Here's a quick overview of your campus data.
+        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-8 text-center">
+            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white drop-shadow-md">
+              Welcome to CampusConnect
+            </h1>
+            <p className="text-xl text-white/90 mt-4 max-w-2xl drop-shadow-sm">
+              A modern solution for student management and data analysis.
             </p>
           </div>
       </div>
