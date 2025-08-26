@@ -22,8 +22,12 @@ const StudentApprovalCard = ({ student }: { student: Student; }) => {
           <span>{student.age}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Marks</span>
-          <span className="font-semibold">{student.marks}</span>
+          <span className="text-muted-foreground">Subject</span>
+          <span>{student.subject}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Score</span>
+          <span className="font-semibold">{student.score}</span>
         </div>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">

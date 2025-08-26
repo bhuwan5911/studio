@@ -8,7 +8,7 @@ import * as React from 'react';
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8"];
 
 interface ChartData {
-    departmentPerformanceData: { department: string; averageMarks: number }[];
+    departmentPerformanceData: { department: string; averageScore: number }[];
     studentDistributionData: { name: string; value: number }[];
     marksDistributionData: { name: string; count: number }[];
 }
@@ -16,8 +16,8 @@ interface ChartData {
 export function ReportCharts({ departmentPerformanceData, studentDistributionData, marksDistributionData }: ChartData) {
 
   const departmentPerformanceConfig = {
-    averageMarks: {
-      label: 'Average Marks',
+    averageScore: {
+      label: 'Average Score',
       color: 'hsl(var(--primary))',
     },
   };
@@ -35,7 +35,7 @@ export function ReportCharts({ departmentPerformanceData, studentDistributionDat
                 <Card className="lg:col-span-2">
                     <CardHeader>
                         <CardTitle>Department Performance</CardTitle>
-                        <CardDescription>Average student marks by department.</CardDescription>
+                        <CardDescription>Average student scores by department.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {departmentPerformanceData.length > 0 ? (
@@ -52,7 +52,7 @@ export function ReportCharts({ departmentPerformanceData, studentDistributionDat
                                     cursor={false}
                                     content={<ChartTooltipContent hideLabel />}
                                     />
-                                    <Bar dataKey="averageMarks" fill="var(--color-averageMarks)" radius={8} />
+                                    <Bar dataKey="averageScore" fill="var(--color-averageScore)" radius={8} />
                                 </BarChart>
                             </ChartContainer>
                         ) : (
@@ -90,8 +90,8 @@ export function ReportCharts({ departmentPerformanceData, studentDistributionDat
             
             <Card>
                     <CardHeader>
-                        <CardTitle>Marks Distribution</CardTitle>
-                        <CardDescription>Distribution of marks across all students.</CardDescription>
+                        <CardTitle>Score Distribution</CardTitle>
+                        <CardDescription>Distribution of scores across all students.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {marksDistributionData.some(d => d.count > 0) ? (

@@ -2,7 +2,8 @@ export type Student = {
   id: string;
   name: string;
   age: number;
-  marks: number;
+  subject: string;
+  score: number;
   department: string;
   status: 'approved' | 'pending';
 };

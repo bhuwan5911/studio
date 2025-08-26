@@ -42,8 +42,9 @@ const StudentTableRow = React.memo(({ student, onDelete, onEdit, isSelected, onS
         <TableCell className="hidden md:table-cell"><Badge variant="secondary">{student.id}</Badge></TableCell>
         <TableCell className="font-medium">{student.name}</TableCell>
         <TableCell className="hidden sm:table-cell">{student.age}</TableCell>
-        <TableCell>{student.marks}</TableCell>
         <TableCell className="hidden md:table-cell">{student.department}</TableCell>
+        <TableCell className="hidden md:table-cell">{student.subject}</TableCell>
+        <TableCell>{student.score}</TableCell>
         <TableCell>
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -109,6 +110,7 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
     (student) =>
       student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
@@ -160,7 +162,7 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
     <div className="space-y-4">
         <div className="flex items-center justify-between py-4">
           <Input
-            placeholder="Filter by name, department, or ID..."
+            placeholder="Filter by name, department, subject, or ID..."
             value={searchTerm}
             onChange={(event) => {
                 setSearchTerm(event.target.value)
@@ -200,12 +202,13 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
                     </Button>
                 </TableHead>
                 <TableHead className="hidden sm:table-cell">Age</TableHead>
+                <TableHead className="hidden md:table-cell">Department</TableHead>
+                <TableHead className="hidden md:table-cell">Subject</TableHead>
                 <TableHead>
-                    <Button variant="ghost" onClick={() => handleSort('marks')}>
-                    Marks <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <Button variant="ghost" onClick={() => handleSort('score')}>
+                    Score <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 </TableHead>
-                <TableHead className="hidden md:table-cell">Department</TableHead>
                 <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
@@ -223,7 +226,7 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
                 ))
                 ) : (
                 <TableRow>
-                    <TableCell colSpan={7} className="h-48 text-center">
+                    <TableCell colSpan={8} className="h-48 text-center">
                     <div className="flex flex-col items-center gap-4">
                         <Users className="h-12 w-12 text-muted-foreground" />
                         <div className="space-y-1">

@@ -28,8 +28,8 @@ export default async function ReportsPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Marks Overview</CardTitle>
-                    <CardDescription>A summary of marks for all approved students.</CardDescription>
+                    <CardTitle>Score Overview</CardTitle>
+                    <CardDescription>A summary of scores for all approved students.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <StudentTable students={approvedStudents} isPaginated={false} />

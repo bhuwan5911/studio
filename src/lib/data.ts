@@ -94,22 +94,22 @@ export async function undoLastAction(): Promise<UndoAction | null> {
 
 // --- Report Data ---
 
-export async function getDepartmentPerformance(): Promise<{ department: string; averageMarks: number }[]> {
+export async function getDepartmentPerformance(): Promise<{ department: string; averageScore: number }[]> {
     const approvedStudents = await getApprovedStudents();
     if (!approvedStudents.length) return [];
     
     const dataByDept = approvedStudents.reduce((acc, student) => {
         if (!acc[student.department]) {
-            acc[student.department] = { totalMarks: 0, count: 0 };
+            acc[student.department] = { totalScore: 0, count: 0 };
         }
-        acc[student.department].totalMarks += student.marks;
+        acc[student.department].totalScore += student.score;
         acc[student.department].count += 1;
         return acc;
-    }, {} as Record<string, { totalMarks: number; count: number }>);
+    }, {} as Record<string, { totalScore: number; count: number }>);
 
-    return Object.entries(dataByDept).map(([department, {totalMarks, count}]) => ({
+    return Object.entries(dataByDept).map(([department, {totalScore, count}]) => ({
         department,
-        averageMarks: Math.round(totalMarks / count)
+        averageScore: Math.round(totalScore / count)
     }));
 }
 
@@ -142,10 +142,10 @@ export async function getMarksDistribution(): Promise<{ name: string; count: num
         { name: '<60', count: 0 },
      ];
      approvedStudents.forEach(student => {
-        if(student.marks >= 90) bins[0].count++;
-        else if (student.marks >= 80) bins[1].count++;
-        else if (student.marks >= 70) bins[2].count++;
-        else if (student.marks >= 60) bins[3].count++;
+        if(student.score >= 90) bins[0].count++;
+        else if (student.score >= 80) bins[1].count++;
+        else if (student.score >= 70) bins[2].count++;
+        else if (student.score >= 60) bins[3].count++;
         else bins[4].count++;
      });
      return bins;
