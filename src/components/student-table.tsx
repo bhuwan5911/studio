@@ -26,6 +26,7 @@ import { Badge } from '@/components/ui/badge';
 import { deleteStudent } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 type SortKey = keyof Student;
 type SortDirection = 'asc' | 'desc';
@@ -40,7 +41,15 @@ const StudentTableRow = React.memo(({ student, onDelete, onEdit, isSelected, onS
             />
         </TableCell>
         <TableCell className="hidden md:table-cell"><Badge variant="secondary">{student.id}</Badge></TableCell>
-        <TableCell className="font-medium">{student.name}</TableCell>
+        <TableCell className="font-medium">
+             <div className="flex items-center gap-3">
+                <Avatar>
+                    <AvatarImage src={student.avatar} alt={student.name} />
+                    <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                {student.name}
+            </div>
+        </TableCell>
         <TableCell className="hidden sm:table-cell">{student.age}</TableCell>
         <TableCell className="hidden md:table-cell">{student.department}</TableCell>
         <TableCell className="hidden md:table-cell">

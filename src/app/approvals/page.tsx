@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { Student } from '@/lib/types';
 import { getPendingStudents } from '@/lib/data';
 import { ApprovalActions } from '@/components/approval-actions';
@@ -8,7 +8,8 @@ const StudentApprovalCard = ({ student }: { student: Student; }) => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-4">
-        <Avatar>
+        <Avatar className="h-12 w-12">
+            <AvatarImage src={student.avatar} alt={student.name} />
             <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
         </Avatar>
         <div>

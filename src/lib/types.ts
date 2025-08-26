@@ -11,6 +11,7 @@ export type Student = {
   subjects: SubjectScore[];
   averageScore: number;
   status: 'approved' | 'pending';
+  avatar?: string;
 };
 
 export type UndoAction = {

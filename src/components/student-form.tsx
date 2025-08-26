@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import type { Student } from '@/lib/types';
 import { PlusCircle, Trash2 } from 'lucide-react';
+import { ImageUpload } from '@/components/image-upload';
 
 const subjectSchema = z.object({
   name: z.string().min(2, 'Subject name is required'),
@@ -28,6 +29,7 @@ const studentSchema = z.object({
   age: z.coerce.number().min(16, 'Age must be at least 16').max(100, 'Age seems too high'),
   department: z.string().min(2, 'Department is required'),
   subjects: z.array(subjectSchema).min(1, 'At least one subject is required'),
+  avatar: z.string().optional(),
 });
 
 type StudentFormData = z.infer<typeof studentSchema>;
@@ -47,6 +49,7 @@ export function StudentForm({ onSubmit, defaultValues, isEditMode = false }: Stu
       age: defaultValues?.age || 0,
       department: defaultValues?.department || '',
       subjects: defaultValues?.subjects || [{ name: '', score: 0 }],
+      avatar: defaultValues?.avatar || '',
     },
   });
 
@@ -70,6 +73,22 @@ export function StudentForm({ onSubmit, defaultValues, isEditMode = false }: Stu
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+            <FormField
+                control={form.control}
+                name="avatar"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-center">
+                    <FormLabel>Student Avatar</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             <FormField
               control={form.control}
               name="id"
