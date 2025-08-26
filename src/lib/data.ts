@@ -1,49 +1,46 @@
 import type { Student, UndoAction } from './types';
-
-let students: Student[] = [];
-
-let undoStack: UndoAction[] = [];
+import { db } from './db';
 
 export async function getStudents(): Promise<Student[]> {
-  return students;
+  return db.students;
 }
 
 export async function getApprovedStudents(): Promise<Student[]> {
-    return students.filter(s => s.status === 'approved');
+    return db.students.filter(s => s.status === 'approved');
 }
 
 export async function getPendingStudents(): Promise<Student[]> {
-    return students.filter(s => s.status === 'pending');
+    return db.students.filter(s => s.status === 'pending');
 }
 
 export async function getStudentById(id: string): Promise<Student | undefined> {
-  return students.find((s) => s.id === id);
+  return db.students.find((s) => s.id === id);
 }
 
 export async function addStudent(student: Student): Promise<Student> {
-  students.unshift(student);
-  undoStack.push({ id: crypto.randomUUID(), type: 'ADD', student, timestamp: new Date() });
+  db.students.unshift(student);
+  db.undoStack.push({ id: crypto.randomUUID(), type: 'ADD', student, timestamp: new Date() });
   return student;
 }
 
 export async function updateStudent(id: string, data: Partial<Omit<Student, 'id'>>): Promise<Student | null> {
-  const studentIndex = students.findIndex((s) => s.id === id);
+  const studentIndex = db.students.findIndex((s) => s.id === id);
   if (studentIndex === -1) return null;
 
-  const previousState = { ...students[studentIndex] };
-  students[studentIndex] = { ...students[studentIndex], ...data };
+  const previousState = { ...db.students[studentIndex] };
+  db.students[studentIndex] = { ...db.students[studentIndex], ...data };
   
-  undoStack.push({ id: crypto.randomUUID(), type: 'UPDATE', student: students[studentIndex], previousState, timestamp: new Date() });
+  db.undoStack.push({ id: crypto.randomUUID(), type: 'UPDATE', student: db.students[studentIndex], previousState, timestamp: new Date() });
 
-  return students[studentIndex];
+  return db.students[studentIndex];
 }
 
 export async function deleteStudent(id: string): Promise<Student | null> {
-  const studentIndex = students.findIndex((s) => s.id === id);
+  const studentIndex = db.students.findIndex((s) => s.id === id);
   if (studentIndex === -1) return null;
 
-  const [deletedStudent] = students.splice(studentIndex, 1);
-  undoStack.push({ id: crypto.randomUUID(), type: 'DELETE', student: deletedStudent, timestamp: new Date() });
+  const [deletedStudent] = db.students.splice(studentIndex, 1);
+  db.undoStack.push({ id: crypto.randomUUID(), type: 'DELETE', student: deletedStudent, timestamp: new Date() });
   
   return deletedStudent;
 }
@@ -57,34 +54,34 @@ export async function approveStudent(id: string): Promise<Student | null> {
 }
 
 export async function rejectStudent(id: string): Promise<Student | null> {
-    const studentIndex = students.findIndex((s) => s.id === id);
+    const studentIndex = db.students.findIndex((s) => s.id === id);
     if (studentIndex === -1) return null;
 
-    const [rejectedStudent] = students.splice(studentIndex, 1);
+    const [rejectedStudent] = db.students.splice(studentIndex, 1);
     return rejectedStudent;
 }
 
 export async function getLastUndoAction(): Promise<UndoAction | null> {
-    return undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
+    return db.undoStack.length > 0 ? db.undoStack[db.undoStack.length - 1] : null;
 }
 
 export async function undoLastAction(): Promise<UndoAction | null> {
-    if (undoStack.length === 0) return null;
+    if (db.undoStack.length === 0) return null;
     
-    const lastAction = undoStack.pop();
+    const lastAction = db.undoStack.pop();
     if (!lastAction) return null;
 
     switch (lastAction.type) {
         case 'ADD':
-            students = students.filter(s => s.id !== lastAction.student.id);
+            db.students = db.students.filter(s => s.id !== lastAction.student.id);
             break;
         case 'DELETE':
-            students.unshift(lastAction.student);
+            db.students.unshift(lastAction.student);
             break;
         case 'UPDATE':
-            const studentIndex = students.findIndex(s => s.id === lastAction.student.id);
+            const studentIndex = db.students.findIndex(s => s.id === lastAction.student.id);
             if (studentIndex !== -1 && lastAction.previousState) {
-                students[studentIndex] = lastAction.previousState;
+                db.students[studentIndex] = lastAction.previousState;
             }
             break;
     }
