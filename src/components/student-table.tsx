@@ -152,41 +152,43 @@ export function StudentTable({ students, isPaginated }: { students: Student[], i
     router.push(`/students/edit/${id}`);
   }, [router]);
 
+  React.useEffect(() => {
+    setSelectedRows({});
+  }, [searchTerm, currentPage]);
+
   return (
     <div className="space-y-4">
-        {isPaginated && (
-             <div className="flex items-center justify-between py-4">
-              <Input
-                placeholder="Filter by name, department, or ID..."
-                value={searchTerm}
-                onChange={(event) => {
-                    setSearchTerm(event.target.value)
-                    setCurrentPage(1);
-                }}
-                className="max-w-sm"
-              />
-               {numSelected > 0 && (
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">{numSelected} selected</span>
-                    <DeleteStudentDialog 
-                        onConfirm={handleBulkDelete}
-                        trigger={
-                             <Button variant="destructive" size="sm">
-                                <Trash2 className="mr-2 h-4 w-4" /> Delete ({numSelected})
-                            </Button>
-                        } 
-                    />
-                </div>
-              )}
+        <div className="flex items-center justify-between py-4">
+          <Input
+            placeholder="Filter by name, department, or ID..."
+            value={searchTerm}
+            onChange={(event) => {
+                setSearchTerm(event.target.value)
+                setCurrentPage(1);
+            }}
+            className="max-w-sm"
+          />
+           {numSelected > 0 && (
+            <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">{numSelected} selected</span>
+                <DeleteStudentDialog 
+                    onConfirm={handleBulkDelete}
+                    trigger={
+                         <Button variant="destructive" size="sm">
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete ({numSelected})
+                        </Button>
+                    } 
+                />
             </div>
-        )}
+          )}
+        </div>
         <div className="rounded-md border">
             <Table>
             <TableHeader>
                 <TableRow>
                 <TableHead padding="checkbox">
                     <Checkbox
-                        checked={numSelected > 0 && numSelected === paginatedStudents.length}
+                        checked={numSelected > 0 && numSelected === paginatedStudents.length && paginatedStudents.length > 0}
                         onCheckedChange={(checked) => handleSelectAll(!!checked)}
                         aria-label="Select all"
                     />
