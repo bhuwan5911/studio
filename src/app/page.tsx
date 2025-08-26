@@ -1,46 +1,29 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { useStudentStore } from '@/hooks/use-student-store';
-import { UserCheck, Users, Clock, UserPlus } from 'lucide-react';
-import type { Student } from '@/lib/types';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowRight, GraduationCap, BarChart3, Users } from 'lucide-react';
 
-const DashboardStatCard = ({
-  title,
-  value,
-  icon: Icon,
-}: {
-  title: string;
-  value: string | number;
-  icon: React.ElementType;
-}) => (
-  <Card>
-    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      <Icon className="h-4 w-4 text-muted-foreground" />
-    </CardHeader>
-    <CardContent>
-      <div className="text-2xl font-bold">{value}</div>
-    </CardContent>
-  </Card>
+const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
+    <Card className="text-center hover:shadow-lg transition-shadow duration-300 animate-fade-in-up">
+        <CardHeader className="items-center">
+            <div className="p-4 bg-primary/10 rounded-full mb-4">
+                <Icon className="h-8 w-8 text-primary" />
+            </div>
+            <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <p className="text-muted-foreground">{description}</p>
+        </CardContent>
+    </Card>
 );
 
+
 export default function Home() {
-  const { students, pendingStudents } = useStudentStore();
-
-  const approvedStudents = students.filter(s => s.status === 'approved');
-  const recentlyApproved = students.filter(s => s.status === 'approved').slice(-5).reverse();
-
-  const topper = approvedStudents.reduce(
-    (max: Student | null, student: Student) =>
-      !max || student.marks > max.marks ? student : max,
-    null
-  );
-
   return (
-    <div className="flex flex-col gap-8">
-      <div className="relative h-80 w-full rounded-lg overflow-hidden">
+    <div className="flex flex-col">
+      <div className="relative h-[calc(100vh-8rem)] w-[calc(100%+4rem)] sm:w-[calc(100%+6rem)] lg:w-[calc(100%+8rem)] -mt-4 sm:-mt-6 lg:-mt-8 -ml-4 sm:-ml-6 lg:-ml-8 mb-12">
         <video
           src="https://videos.pexels.com/video-files/853874/853874-hd_1920_1080_25fps.mp4"
           autoPlay
@@ -50,69 +33,49 @@ export default function Home() {
           data-ai-hint="university students walking"
         />
         <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-8 text-center">
-            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white drop-shadow-md">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-md animate-fade-in-down">
               Welcome to CampusConnect
             </h1>
-            <p className="text-xl text-white/90 mt-4 max-w-2xl drop-shadow-sm">
-              A modern solution for student management and data analysis.
+            <p className="text-xl md:text-2xl text-white/90 mt-4 max-w-3xl drop-shadow-sm animate-fade-in-up">
+              A modern, responsive, and functional solution for student management.
             </p>
-          </div>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <DashboardStatCard
-          title="Total Students"
-          value={students.length}
-          icon={Users}
-        />
-         <DashboardStatCard
-          title="Approved Students"
-          value={approvedStudents.length}
-          icon={UserCheck}
-        />
-        <DashboardStatCard
-          title="Topper"
-          value={topper ? `${topper.name} (${topper.marks})` : 'N/A'}
-          icon={UserCheck}
-        />
-        <DashboardStatCard
-          title="Pending Approvals"
-          value={pendingStudents.length}
-          icon={Clock}
-        />
-      </div>
-       <Card>
-          <CardHeader>
-            <CardTitle>Recently Approved Students</CardTitle>
-            <CardDescription>The last 5 students that were approved.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {recentlyApproved.length > 0 ? (
-              <div className="space-y-4">
-                {recentlyApproved.map((student) => (
-                  <div key={student.id} className="flex items-center gap-4">
-                    <Avatar>
-                        <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="grid gap-0.5 text-sm">
-                      <div className="font-semibold">{student.name}</div>
-                      <div className="text-muted-foreground">{student.department}</div>
-                    </div>
-                    <div className="ml-auto text-sm font-medium">{student.marks} Marks</div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-                <div className="flex flex-col items-center justify-center p-8 text-center">
-                    <UserPlus className="h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-semibold">No recent approvals</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        Approved students will appear here.
-                    </p>
-                </div>
-            )}
-          </CardContent>
-        </Card>
+       <div className="space-y-12 my-12">
+            <div className="text-center space-y-4">
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight">What is CampusConnect?</h2>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                   This application is a comprehensive student management system built with Next.js and Tailwind CSS. It demonstrates a complete, feature-rich, and production-ready user interface for handling student data effectively.
+                </p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-3">
+                <FeatureCard 
+                    icon={Users}
+                    title="Student Management"
+                    description="Easily add, edit, delete, and approve student records with a clean and intuitive interface."
+                />
+                 <FeatureCard 
+                    icon={BarChart3}
+                    title="Data Analytics"
+                    description="Visualize student data with interactive charts and generate insightful reports on performance."
+                />
+                 <FeatureCard 
+                    icon={GraduationCap}
+                    title="Modern UI/UX"
+                    description="A fully responsive and aesthetically pleasing design with light/dark modes for a great user experience."
+                />
+            </div>
+
+             <div className="text-center">
+                <Button asChild size="lg">
+                    <Link href="/students">
+                        Get Started <ArrowRight className="ml-2" />
+                    </Link>
+                </Button>
+            </div>
+       </div>
     </div>
   );
 }
