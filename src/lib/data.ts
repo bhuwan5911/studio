@@ -1,97 +1,82 @@
 import type { Student, UndoAction } from './types';
 
-// In a real app, this would be a database.
-// For now, we'll use an in-memory array.
 let students: Student[] = [
-    { id: 'S001', name: 'Alice Johnson', age: 22, marks: 88, department: 'Computer Science', status: 'approved' },
-    { id: 'S002', name: 'Bob Smith', age: 21, marks: 92, department: 'Physics', status: 'approved' },
-    { id: 'S003', name: 'Charlie Brown', age: 23, marks: 76, department: 'Mathematics', status: 'approved' },
-    { id: 'S004', name: 'Diana Prince', age: 20, marks: 95, department: 'History', status: 'pending' },
+  { id: 'S001', name: 'Alice Johnson', age: 22, marks: 88, department: 'Computer Science', status: 'approved' },
+  { id: 'S002', name: 'Bob Smith', age: 21, marks: 92, department: 'Mechanical Engineering', status: 'approved' },
+  { id: 'S003', name: 'Charlie Brown', age: 23, marks: 76, department: 'Physics', status: 'approved' },
+  { id: 'S004', name: 'Diana Miller', age: 20, marks: 95, department: 'Computer Science', status: 'approved' },
+  { id: 'S005', name: 'Ethan Williams', age: 22, marks: 81, department: 'Chemistry', status: 'pending' },
+  { id: 'S006', name: 'Fiona Davis', age: 21, marks: 89, department: 'Mechanical Engineering', status: 'approved' },
+  { id: 'S007', name: 'George Wilson', age: 24, marks: 68, department: 'Physics', status: 'pending' },
 ];
 
 let undoStack: UndoAction[] = [];
 
-// Simulate network delay
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-
-export async function getStudents() {
-    
-    return students;
+export async function getStudents(): Promise<Student[]> {
+  return students;
 }
 
-export async function getApprovedStudents() {
-    
+export async function getApprovedStudents(): Promise<Student[]> {
     return students.filter(s => s.status === 'approved');
 }
 
-export async function getPendingStudents() {
-    
+export async function getPendingStudents(): Promise<Student[]> {
     return students.filter(s => s.status === 'pending');
 }
 
-export async function getStudentById(id: string) {
-    
-    return students.find(s => s.id === id);
+export async function getStudentById(id: string): Promise<Student | undefined> {
+  return students.find((s) => s.id === id);
 }
 
-export async function addStudent(student: Student) {
-    
-    students.push(student);
-    undoStack.push({ id: crypto.randomUUID(), type: 'ADD', student, timestamp: new Date() });
+export async function addStudent(student: Student): Promise<Student> {
+  students.push(student);
+  undoStack.push({ id: crypto.randomUUID(), type: 'ADD', student, timestamp: new Date() });
+  return student;
+}
+
+export async function updateStudent(id: string, data: Partial<Omit<Student, 'id'>>): Promise<Student | null> {
+  const studentIndex = students.findIndex((s) => s.id === id);
+  if (studentIndex === -1) return null;
+
+  const previousState = { ...students[studentIndex] };
+  students[studentIndex] = { ...students[studentIndex], ...data };
+  
+  undoStack.push({ id: crypto.randomUUID(), type: 'UPDATE', student: students[studentIndex], previousState, timestamp: new Date() });
+
+  return students[studentIndex];
+}
+
+export async function deleteStudent(id: string): Promise<Student | null> {
+  const studentIndex = students.findIndex((s) => s.id === id);
+  if (studentIndex === -1) return null;
+
+  const [deletedStudent] = students.splice(studentIndex, 1);
+  undoStack.push({ id: crypto.randomUUID(), type: 'DELETE', student: deletedStudent, timestamp: new Date() });
+  
+  return deletedStudent;
+}
+
+export async function approveStudent(id: string): Promise<Student | null> {
+    const student = await getStudentById(id);
+    if (!student) return null;
+
+    student.status = 'approved';
     return student;
 }
 
-export async function updateStudent(id: string, data: Partial<Omit<Student, 'id'>>) {
-    
-    const studentIndex = students.findIndex(s => s.id === id);
-    if (studentIndex === -1) return null;
-    
-    const previousState = { ...students[studentIndex] };
-    const updatedStudent = { ...students[studentIndex], ...data };
-    students[studentIndex] = updatedStudent;
-
-    undoStack.push({ id: crypto.randomUUID(), type: 'UPDATE', student: updatedStudent, previousState, timestamp: new Date() });
-
-    return updatedStudent;
-}
-
-export async function deleteStudent(id: string) {
-    
-    const studentIndex = students.findIndex(s => s.id === id);
-    if (studentIndex === -1) return null;
-    
-    const [deletedStudent] = students.splice(studentIndex, 1);
-    undoStack.push({ id: crypto.randomUUID(), type: 'DELETE', student: deletedStudent, timestamp: new Date() });
-    
-    return deletedStudent;
-}
-
-
-export async function approveStudent(id: string) {
-    
-    const studentIndex = students.findIndex(s => s.id === id);
+export async function rejectStudent(id: string): Promise<Student | null> {
+    const studentIndex = students.findIndex((s) => s.id === id);
     if (studentIndex === -1) return null;
 
-    students[studentIndex].status = 'approved';
-    return students[studentIndex];
-}
-
-export async function rejectStudent(id: string) {
-     
-    const studentIndex = students.findIndex(s => s.id === id);
-    if (studentIndex === -1) return null;
-    
     const [rejectedStudent] = students.splice(studentIndex, 1);
     return rejectedStudent;
 }
 
-export async function getLastUndoAction() {
-    
+export async function getLastUndoAction(): Promise<UndoAction | null> {
     return undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
 }
 
-export async function undoLastAction() {
-    
+export async function undoLastAction(): Promise<UndoAction | null> {
     if (undoStack.length === 0) return null;
     
     const lastAction = undoStack.pop();
@@ -105,11 +90,9 @@ export async function undoLastAction() {
             students.push(lastAction.student);
             break;
         case 'UPDATE':
-            if (lastAction.previousState) {
-                const index = students.findIndex(s => s.id === lastAction.previousState!.id);
-                if (index !== -1) {
-                    students[index] = lastAction.previousState;
-                }
+            const studentIndex = students.findIndex(s => s.id === lastAction.student.id);
+            if (studentIndex !== -1 && lastAction.previousState) {
+                students[studentIndex] = lastAction.previousState;
             }
             break;
     }
@@ -119,7 +102,7 @@ export async function undoLastAction() {
 
 // --- Report Data ---
 
-export async function getDepartmentPerformance() {
+export async function getDepartmentPerformance(): Promise<{ department: string; averageMarks: number }[]> {
     const approvedStudents = await getApprovedStudents();
     if (!approvedStudents.length) return [];
     
@@ -138,7 +121,7 @@ export async function getDepartmentPerformance() {
     }));
 }
 
-export async function getStudentDistribution() {
+export async function getStudentDistribution(): Promise<{ name: string; value: number }[]> {
     const approvedStudents = await getApprovedStudents();
     if (!approvedStudents.length) return [];
     
@@ -156,8 +139,8 @@ export async function getStudentDistribution() {
     }));
 }
 
-export async function getMarksDistribution() {
-    const approvedStudents = await getApprovedStudents();
+export async function getMarksDistribution(): Promise<{ name: string; count: number }[]> {
+    const approvedStudents = await getApproved.students();
     if (!approvedStudents.length) return [];
      const bins = [
         { name: '90-100', count: 0 },
