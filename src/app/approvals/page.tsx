@@ -1,24 +1,65 @@
 'use client';
 
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { useStudentStore } from '@/hooks/use-student-store';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, X, Sparkles } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { RejectStudentDialog } from '@/components/reject-student-dialog';
-import { StudentSuggestionDialog } from '@/components/student-suggestion-dialog';
 import type { Student } from '@/lib/types';
+
+const StudentApprovalCard = React.memo(({ student, onApprove, onReject }: { student: Student; onApprove: (id: string) => void; onReject: (id: string) => void; }) => {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center gap-4">
+        <Avatar>
+            <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
+        </Avatar>
+        <div>
+            <CardTitle>{student.name}</CardTitle>
+            <CardDescription>{student.department}</CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Age</span>
+          <span>{student.age}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+          <span className="text-muted-foreground">Marks</span>
+          <span className="font-semibold">{student.marks}</span>
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-end gap-2">
+          <RejectStudentDialog
+              onConfirm={() => onReject(student.id)}
+              trigger={
+              <Button variant="outline" size="sm">
+                  <X className="mr-2 h-4 w-4" /> Reject
+              </Button>
+              }
+          />
+          <Button size="sm" onClick={() => onApprove(student.id)}>
+              <Check className="mr-2 h-4 w-4" /> Approve
+          </Button>
+      </CardFooter>
+    </Card>
+  );
+});
+StudentApprovalCard.displayName = 'StudentApprovalCard';
+
 
 export default function ApprovalsPage() {
   const { pendingStudents, dispatch } = useStudentStore();
 
-  const handleApprove = (id: string) => {
+  const handleApprove = React.useCallback((id: string) => {
     dispatch({ type: 'APPROVE_STUDENT', payload: id });
-  };
+  }, [dispatch]);
 
-  const handleReject = (id: string) => {
+  const handleReject = React.useCallback((id: string) => {
     dispatch({ type: 'REJECT_STUDENT', payload: id });
-  };
+  }, [dispatch]);
 
   return (
     <div className="space-y-6">
@@ -29,52 +70,14 @@ export default function ApprovalsPage() {
         </p>
       </div>
       {pendingStudents.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {pendingStudents.map((student: Student) => (
-            <Card key={student.id}>
-              <CardHeader className="flex flex-row items-center gap-4">
-                <Avatar>
-                    <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                    <CardTitle>{student.name}</CardTitle>
-                    <CardDescription>{student.department}</CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Age</span>
-                  <span>{student.age}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Marks</span>
-                  <span className="font-semibold">{student.marks}</span>
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col gap-2 items-stretch">
-                 <StudentSuggestionDialog
-                    student={student}
-                    trigger={
-                      <Button variant="outline" size="sm">
-                        <Sparkles className="mr-2 h-4 w-4" /> Get AI Suggestion
-                      </Button>
-                    }
-                  />
-                <div className="flex justify-end gap-2">
-                    <RejectStudentDialog
-                        onConfirm={() => handleReject(student.id)}
-                        trigger={
-                        <Button variant="outline" size="sm" className="w-full">
-                            <X className="mr-2 h-4 w-4" /> Reject
-                        </Button>
-                        }
-                    />
-                    <Button size="sm" onClick={() => handleApprove(student.id)} className="w-full">
-                        <Check className="mr-2 h-4 w-4" /> Approve
-                    </Button>
-                </div>
-              </CardFooter>
-            </Card>
+            <StudentApprovalCard 
+              key={student.id}
+              student={student}
+              onApprove={handleApprove}
+              onReject={handleReject}
+            />
           ))}
         </div>
       ) : (
