@@ -21,13 +21,19 @@ const StudentApprovalCard = ({ student }: { student: Student; }) => {
           <span className="text-muted-foreground">Age</span>
           <span>{student.age}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Subject</span>
-          <span>{student.subject}</span>
+        <div className="flex justify-between text-sm font-semibold">
+          <span>Subjects</span>
+          <span>Scores</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Score</span>
-          <span className="font-semibold">{student.score}</span>
+         {student.subjects.map((subject) => (
+            <div key={subject.name} className="flex justify-between text-sm">
+              <span className="text-muted-foreground">{subject.name}</span>
+              <span>{subject.score}</span>
+            </div>
+         ))}
+        <div className="flex justify-between text-sm mt-2 border-t pt-2">
+          <span className="text-muted-foreground font-semibold">Average Score</span>
+          <span className="font-semibold">{student.averageScore}</span>
         </div>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">

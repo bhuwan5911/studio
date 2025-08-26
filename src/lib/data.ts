@@ -102,7 +102,7 @@ export async function getDepartmentPerformance(): Promise<{ department: string; 
         if (!acc[student.department]) {
             acc[student.department] = { totalScore: 0, count: 0 };
         }
-        acc[student.department].totalScore += student.score;
+        acc[student.department].totalScore += student.averageScore;
         acc[student.department].count += 1;
         return acc;
     }, {} as Record<string, { totalScore: number; count: number }>);
@@ -142,10 +142,10 @@ export async function getMarksDistribution(): Promise<{ name: string; count: num
         { name: '<60', count: 0 },
      ];
      approvedStudents.forEach(student => {
-        if(student.score >= 90) bins[0].count++;
-        else if (student.score >= 80) bins[1].count++;
-        else if (student.score >= 70) bins[2].count++;
-        else if (student.score >= 60) bins[3].count++;
+        if(student.averageScore >= 90) bins[0].count++;
+        else if (student.averageScore >= 80) bins[1].count++;
+        else if (student.averageScore >= 70) bins[2].count++;
+        else if (student.averageScore >= 60) bins[3].count++;
         else bins[4].count++;
      });
      return bins;

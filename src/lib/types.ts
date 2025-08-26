@@ -1,10 +1,15 @@
+export type SubjectScore = {
+  name: string;
+  score: number;
+};
+
 export type Student = {
   id: string;
   name: string;
   age: number;
-  subject: string;
-  score: number;
   department: string;
+  subjects: SubjectScore[];
+  averageScore: number;
   status: 'approved' | 'pending';
 };
 
