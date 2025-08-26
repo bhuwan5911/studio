@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { ArrowRight, GraduationCap, BarChart3, Users } from 'lucide-react';
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
-    <Card className="text-center hover:shadow-lg transition-shadow duration-300 animate-fade-in-up">
+    <Card className="text-center hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
         <CardHeader className="items-center">
             <div className="p-4 bg-primary/10 rounded-full mb-4">
                 <Icon className="h-8 w-8 text-primary" />
@@ -33,10 +33,10 @@ export default function Home() {
           data-ai-hint="university students walking"
         />
         <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-8 text-center">
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-md animate-fade-in-down">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-md transition-opacity duration-1000 ease-in opacity-0 animate-fade-in">
               Welcome to CampusConnect
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 mt-4 max-w-3xl drop-shadow-sm animate-fade-in-up">
+            <p className="text-xl md:text-2xl text-white/90 mt-4 max-w-3xl drop-shadow-sm transition-opacity duration-1000 ease-in delay-300 opacity-0 animate-fade-in">
               A modern, responsive, and functional solution for student management.
             </p>
         </div>
