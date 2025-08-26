@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { StudentProvider } from '@/contexts/student-provider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Header } from '@/components/header';
+import { CustomCursor } from '@/components/custom-cursor';
 
 export const metadata: Metadata = {
   title: 'CampusConnect',
@@ -44,6 +45,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <StudentProvider>
+            <CustomCursor />
             <Header />
             <main className="p-4 sm:p-6 lg:p-8">{children}</main>
             <Toaster />
