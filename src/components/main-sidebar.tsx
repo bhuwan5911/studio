@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarTrigger,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import {
@@ -27,6 +28,7 @@ import { useStudentStore } from '@/hooks/use-student-store';
 import { Badge } from './ui/badge';
 import { useTheme } from 'next-themes';
 import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/', label: 'Home', icon: LayoutDashboard },
@@ -36,10 +38,41 @@ const navItems = [
   { href: '/undo', label: 'Undo', icon: Undo2, notificationKey: 'undoStack' },
 ];
 
+function ThemeToggle() {
+    const { theme, setTheme } = useTheme();
+    const { state } = useSidebar();
+
+    if (state === 'collapsed') {
+        return (
+             <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            >
+              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+        )
+    }
+
+    return (
+        <div className="flex items-center w-full rounded-md border p-1">
+            <Button variant={theme === 'light' ? 'secondary' : 'ghost'} size="sm" className="w-full" onClick={() => setTheme('light')}>
+                <Sun className="mr-2 h-4 w-4" /> Light
+            </Button>
+            <Button variant={theme === 'dark' ? 'secondary' : 'ghost'} size="sm" className="w-full" onClick={() => setTheme('dark')}>
+                <Moon className="mr-2 h-4 w-4" /> Dark
+            </Button>
+        </div>
+    )
+}
+
 export function MainSidebar() {
   const pathname = usePathname();
   const { pendingStudents, undoStack } = useStudentStore();
-  const { theme, setTheme } = useTheme();
+  const { state } = useSidebar();
 
   const notificationCounts = {
     pendingStudents: pendingStudents.length,
@@ -48,9 +81,9 @@ export function MainSidebar() {
 
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="justify-between">
-        <Logo />
+    <Sidebar>
+      <SidebarHeader className={cn("justify-center", state === 'expanded' && 'justify-between')}>
+        <Logo className={cn(state === 'collapsed' && 'hidden')} />
         <SidebarTrigger />
       </SidebarHeader>
       <SidebarContent>
@@ -69,12 +102,13 @@ export function MainSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive}
+                    size="lg"
                     tooltip={{ children: item.label }}
                   >
                     <span>
                       <item.icon />
                       <span>{item.label}</span>
-                       {count > 0 && <Badge variant="destructive" className="ml-auto">{count}</Badge>}
+                       {count > 0 && <Badge variant="destructive" className="ml-auto group-data-[collapsible=icon]:hidden">{count}</Badge>}
                     </span>
                   </SidebarMenuButton>
                 </Link>
@@ -84,28 +118,17 @@ export function MainSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-         <div className="flex items-center justify-between gap-2 p-2">
-            <div className='flex items-center gap-2'>
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="https://placehold.co/40x40.png" alt="@admin" data-ai-hint="user avatar" />
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col text-sm">
-                  <span className="font-semibold">Admin</span>
-                  <span className="text-muted-foreground">admin@campus.edu</span>
-              </div>
+         <div className={cn("flex items-center gap-2 p-2 rounded-lg", state === 'expanded' && 'border')}>
+            <Avatar className="h-9 w-9">
+            <AvatarImage src="https://placehold.co/40x40.png" alt="@admin" data-ai-hint="user avatar" />
+            <AvatarFallback>AD</AvatarFallback>
+            </Avatar>
+            <div className={cn("flex flex-col text-sm", state === 'collapsed' && "hidden")}>
+                <span className="font-semibold">Admin</span>
+                <span className="text-muted-foreground">admin@campus.edu</span>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            >
-              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
         </div>
+        <ThemeToggle />
       </SidebarFooter>
     </Sidebar>
   );
