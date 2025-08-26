@@ -21,7 +21,7 @@ export async function getStudentById(id: string): Promise<Student | undefined> {
 }
 
 export async function addStudent(student: Student): Promise<Student> {
-  students.push(student);
+  students.unshift(student);
   undoStack.push({ id: crypto.randomUUID(), type: 'ADD', student, timestamp: new Date() });
   return student;
 }
@@ -79,7 +79,7 @@ export async function undoLastAction(): Promise<UndoAction | null> {
             students = students.filter(s => s.id !== lastAction.student.id);
             break;
         case 'DELETE':
-            students.push(lastAction.student);
+            students.unshift(lastAction.student);
             break;
         case 'UPDATE':
             const studentIndex = students.findIndex(s => s.id === lastAction.student.id);

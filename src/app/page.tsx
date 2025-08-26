@@ -4,6 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight, GraduationCap, BarChart3, Users } from 'lucide-react';
+import { getLastUndoAction } from '@/lib/data';
+import { UndoAction } from '@/lib/types';
+import { useEffect, useState } from 'react';
+import { UndoCard } from '@/components/undo-card';
 
 const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
     <Card className="text-center hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
@@ -21,16 +25,22 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementTy
 
 
 export default function Home() {
+    const [lastAction, setLastAction] = useState<UndoAction | null>(null);
+
+    useEffect(() => {
+        getLastUndoAction().then(setLastAction);
+    }, []);
+
+
   return (
     <div className="flex flex-col">
-       <div className="relative h-[calc(100vh-10rem)] w-full -mt-4 sm:-mt-6 lg:-mt-8 mb-12">
+       <div className="relative h-[calc(100vh-20rem)] w-full -mt-4 sm:-mt-6 lg:-mt-8 mb-12">
         <video
           src="https://videos.pexels.com/video-files/853874/853874-hd_1920_1080_25fps.mp4"
           autoPlay
           loop
           muted
           playsInline
-          preload="none"
           className="absolute top-0 left-0 w-full h-full object-cover"
           data-ai-hint="university students walking"
         />
@@ -43,6 +53,12 @@ export default function Home() {
             </p>
         </div>
       </div>
+      
+       {lastAction && (
+          <div className="my-6">
+              <UndoCard lastAction={lastAction} />
+          </div>
+       )}
 
        <div className="space-y-12 my-12">
             <div className="text-center space-y-4">

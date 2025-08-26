@@ -18,7 +18,7 @@ export function UndoCard({ lastAction }: { lastAction: UndoAction }) {
     };
 
     return (
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-lg border p-4">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-lg border p-4 bg-card">
             <div className="flex items-center gap-4">
                  <Avatar>
                     <AvatarImage src={lastAction.student.avatar} alt={lastAction.student.name} />

@@ -8,8 +8,6 @@ import {
   LayoutDashboard,
   Users,
   FileText,
-  ClipboardCheck,
-  Undo2,
   Moon,
   Sun,
   Menu,
@@ -23,7 +21,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { Badge } from './ui/badge';
 
 const navItems = [
   { href: '/', label: 'Home', icon: LayoutDashboard },
