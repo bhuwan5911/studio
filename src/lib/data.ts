@@ -5,9 +5,7 @@ let students: Student[] = [
   { id: 'S002', name: 'Bob Smith', age: 21, marks: 92, department: 'Mechanical Engineering', status: 'approved' },
   { id: 'S003', name: 'Charlie Brown', age: 23, marks: 76, department: 'Physics', status: 'approved' },
   { id: 'S004', name: 'Diana Miller', age: 20, marks: 95, department: 'Computer Science', status: 'approved' },
-  { id: 'S005', name: 'Ethan Williams', age: 22, marks: 81, department: 'Chemistry', status: 'pending' },
   { id: 'S006', name: 'Fiona Davis', age: 21, marks: 89, department: 'Mechanical Engineering', status: 'approved' },
-  { id: 'S007', name: 'George Wilson', age: 24, marks: 68, department: 'Physics', status: 'pending' },
 ];
 
 let undoStack: UndoAction[] = [];
