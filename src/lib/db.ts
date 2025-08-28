@@ -1,24 +1,5 @@
-import type { Student, UndoAction } from './types';
+// This file is no longer needed as the data is now managed by a separate backend.
+// All data operations are now handled in `src/lib/data.ts` which makes API calls.
 
-// This is a simple in-memory "database" for development purposes.
-// A global variable is used to ensure the data persists across hot reloads.
-
-interface GlobalWithDb {
-  students: Student[];
-  undoStack: UndoAction[];
-}
-
-declare const global: GlobalWithDb;
-
-if (!global.students) {
-  global.students = [];
-}
-
-if (!global.undoStack) {
-  global.undoStack = [];
-}
-
-export const db = {
-  students: global.students,
-  undoStack: global.undoStack,
-};
+// Keeping the file to avoid breaking imports, but it is now effectively empty.
+export const db = {};

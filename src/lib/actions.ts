@@ -4,9 +4,12 @@ import { revalidatePath } from 'next/cache';
 import * as data from './data';
 import type { Student } from './types';
 
-export async function addStudent(student: Omit<Student, 'status'>) {
-    const newStudent: Student = {...student, status: 'approved'};
-    const result = await data.addStudent(newStudent);
+// The actions now call the updated data functions which hit the API backend.
+// The revalidation logic remains the same to tell Next.js to refresh the UI.
+
+export async function addStudent(student: Omit<Student, 'status' | 'id' | 'averageScore'>) {
+    // The backend will handle setting the ID, average score, and initial status
+    const result = await data.addStudent(student);
     revalidatePath('/students');
     revalidatePath('/reports');
     revalidatePath('/');
@@ -23,11 +26,10 @@ export async function updateStudent(id: string, studentData: Partial<Omit<Studen
 }
 
 export async function deleteStudent(id: string) {
-    const result = await data.deleteStudent(id);
+    await data.deleteStudent(id);
     revalidatePath('/students');
     revalidatePath('/reports');
     revalidatePath('/');
-    return result;
 }
 
 export async function approveStudent(id: string) {
@@ -40,15 +42,15 @@ export async function approveStudent(id: string) {
 }
 
 export async function rejectStudent(id: string) {
-    const result = await data.rejectStudent(id);
+    await data.rejectStudent(id);
     revalidatePath('/approvals');
-    return result;
 }
 
 export async function undoLastAction() {
-    const result = await data.undoLastAction();
+    // This functionality is now disabled as it requires a complex backend implementation
+    // const result = await data.undoLastAction();
     revalidatePath('/');
     revalidatePath('/students');
     revalidatePath('/reports');
-    return result;
+    // return result;
 }
