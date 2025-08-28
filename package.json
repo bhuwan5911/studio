@@ -44,7 +44,10 @@
     "firebase": "^11.9.1",
     "genkit": "^1.14.1",
     "lucide-react": "^0.475.0",
+<<<<<<< HEAD
     "mysql2": "^3.14.3",
+=======
+>>>>>>> 5e5d886ea3bd504bb240f760c8b2562cb3275d59
     "next": "15.3.3",
     "next-themes": "^0.3.0",
     "patch-package": "^8.0.0",
