@@ -15,8 +15,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import type { Student } from '@/lib/types';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2, ArrowLeft } from 'lucide-react';
 import { ImageUpload } from '@/components/image-upload';
+import { useRouter } from 'next/navigation';
 
 const subjectSchema = z.object({
   name: z.string().min(2, 'Subject name is required'),
@@ -41,6 +42,7 @@ interface StudentFormProps {
 }
 
 export function StudentForm({ onSubmit, defaultValues, isEditMode = false }: StudentFormProps) {
+  const router = useRouter();
   const form = useForm<StudentFormData>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
@@ -204,10 +206,14 @@ export function StudentForm({ onSubmit, defaultValues, isEditMode = false }: Stu
                   </Button>
               </div>
             </div>
-
-            <Button type="submit" className="w-full md:w-auto">
-              {isEditMode ? 'Update Student' : 'Add Student'}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2">
+                <Button type="submit" className="w-full sm:w-auto">
+                  {isEditMode ? 'Update Student' : 'Add Student'}
+                </Button>
+                <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                </Button>
+            </div>
           </form>
         </Form>
       </CardContent>
